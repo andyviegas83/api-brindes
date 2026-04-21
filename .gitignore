@@ -1,0 +1,11 @@
+/vendor/
+/.env
+/logs/*.log
+/storage/cache/*
+/storage/rate-limit/*
+/storage/sessions/*
+*.code-workspace
+!/storage/cache/.gitkeep
+!/storage/rate-limit/.gitkeep
+!/storage/sessions/.gitkeep
+!/logs/.gitkeep

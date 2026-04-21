@@ -1,0 +1,25 @@
+{
+    "name": "brindes/api-brinde",
+    "description": "API bridge between ERP/CRM and institutional website.",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Bootstrap\\": "bootstrap/"
+        },
+        "files": [
+            "bootstrap/helpers.php"
+        ]
+    },
+    "scripts": {
+        "serve": "php -S localhost:8080 -t public",
+        "check": "php -l public/index.php"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
