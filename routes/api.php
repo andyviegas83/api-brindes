@@ -43,6 +43,7 @@ $protectedCatalogWriteMiddleware = [
 ];
 
 $router->get('/health', [HealthController::class, 'check'], $publicMiddleware);
+$router->get('/', [HealthController::class, 'check'], $publicMiddleware);
 $router->post('/health', [HealthController::class, 'check'], [
     RequestValidationMiddleware::class,
     JsonOnlyMiddleware::class,

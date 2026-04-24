@@ -15,6 +15,7 @@ final class CompanyProfile
         public readonly ?string $mobilePhone,
         public readonly ?string $logoUrl,
         public readonly ?string $faviconUrl,
+        public readonly array $themeColors,
         public readonly array $socialLinks,
         public readonly array $address
     ) {
@@ -31,6 +32,7 @@ final class CompanyProfile
             $row['mobilePhone'] ?? null,
             $row['logoUrl'] ?? null,
             $row['faviconUrl'] ?? null,
+            is_array($row['siteThemeColors'] ?? null) ? $row['siteThemeColors'] : [],
             [
                 'google' => $row['googleUrl'] ?? null,
                 'reclame_aqui' => $row['reclameAquiUrl'] ?? null,
@@ -67,6 +69,7 @@ final class CompanyProfile
             ],
             'logo_url' => $this->logoUrl,
             'favicon_url' => $this->faviconUrl,
+            'theme_colors' => $this->themeColors,
             'social_links' => $this->socialLinks,
             'address' => $this->address,
         ];

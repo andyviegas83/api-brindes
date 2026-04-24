@@ -53,7 +53,8 @@ $container->singleton(QueryExecutor::class, static fn (Container $container): Qu
     $container->get(DatabaseManager::class)
 ));
 $container->singleton(ErpCompanySettingsRepository::class, static fn (Container $container): ErpCompanySettingsRepository => new ErpCompanySettingsRepository(
-    $container->get(QueryExecutor::class)
+    $container->get(QueryExecutor::class),
+    $container->get(Logger::class)
 ));
 $container->singleton(ErpCategoryRepository::class, static fn (Container $container): ErpCategoryRepository => new ErpCategoryRepository(
     $container->get(QueryExecutor::class)

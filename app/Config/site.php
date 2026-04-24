@@ -83,7 +83,7 @@ return [
         ['name' => 'Fernanda Souza', 'company' => 'Delta Eventos', 'text' => 'Processo claro e boa orientacao para escolher os itens certos para a campanha.'],
     ],
     'institutional_texts' => [
-        'top_bar_message' => 'Seja bem-vindo a nossa operacao de brindes personalizados.',
-        'footer_text' => 'Conteudo institucional base. Substitua por textos reais do ERP/CRM quando o mapeamento estiver concluido.',
+        'top_bar_message' => 'Seja bem-vindo à {company}',
+        'footer_text' => 'Conteúdo institucional base. Substitua por textos reais do ERP/CRM quando o mapeamento estiver concluído.',
     ],
 ];
