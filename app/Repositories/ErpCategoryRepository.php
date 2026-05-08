@@ -18,9 +18,30 @@ final class ErpCategoryRepository extends BaseRepository
         $rows = $this->queryExecutor->fetchAll(
             $this->erpConnection(),
             sprintf(
-                'SELECT "id", "name", "slug", "description", "parentId", "showInSideMenu", "showInTopMenu", "seoTitle", "seoDescription"
+                'SELECT "id", "name", "slug", "description", "parentId", "showInSideMenu", "showInTopMenu", "iconUrl", "seoTitle", "seoDescription"
                  FROM "%s"
                  WHERE "showInSideMenu" = true OR "showInTopMenu" = true
+                 ORDER BY "name" ASC',
+                $table
+            )
+        );
+
+        return array_map(static fn (array $row): Category => Category::fromArray($row), $rows);
+    }
+
+    /**
+     * @return array<int, Category>
+     */
+    public function sideMenu(): array
+    {
+        $table = (string) config('integrations.erp.categories_table', 'Category');
+
+        $rows = $this->queryExecutor->fetchAll(
+            $this->erpConnection(),
+            sprintf(
+                'SELECT "id", "name", "slug", "description", "parentId", "showInSideMenu", "showInTopMenu", "iconUrl", "seoTitle", "seoDescription"
+                 FROM "%s"
+                 WHERE "showInSideMenu" = true
                  ORDER BY "name" ASC',
                 $table
             )
@@ -39,7 +60,7 @@ final class ErpCategoryRepository extends BaseRepository
         $rows = $this->queryExecutor->fetchAll(
             $this->erpConnection(),
             sprintf(
-                'SELECT "id", "name", "slug", "description", "parentId", "showInSideMenu", "showInTopMenu", "seoTitle", "seoDescription"
+                'SELECT "id", "name", "slug", "description", "parentId", "showInSideMenu", "showInTopMenu", "iconUrl", "seoTitle", "seoDescription"
                  FROM "%s"
                  WHERE "showInTopMenu" = true
                  ORDER BY "name" ASC
@@ -62,7 +83,7 @@ final class ErpCategoryRepository extends BaseRepository
         $rows = $this->queryExecutor->fetchAll(
             $this->erpConnection(),
             sprintf(
-                'SELECT "id", "name", "slug", "description", "parentId", "showInSideMenu", "showInTopMenu", "seoTitle", "seoDescription"
+                'SELECT "id", "name", "slug", "description", "parentId", "showInSideMenu", "showInTopMenu", "iconUrl", "seoTitle", "seoDescription"
                  FROM "%s"
                  ORDER BY "name" ASC',
                 $table
@@ -79,7 +100,7 @@ final class ErpCategoryRepository extends BaseRepository
         $row = $this->queryExecutor->fetchOne(
             $this->erpConnection(),
             sprintf(
-                'SELECT "id", "name", "slug", "description", "parentId", "showInSideMenu", "showInTopMenu", "seoTitle", "seoDescription"
+                'SELECT "id", "name", "slug", "description", "parentId", "showInSideMenu", "showInTopMenu", "iconUrl", "seoTitle", "seoDescription"
                  FROM "%s"
                  WHERE CAST("id" AS TEXT) = :identifier OR "slug" = :identifier
                  LIMIT 1',

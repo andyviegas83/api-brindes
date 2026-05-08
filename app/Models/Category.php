@@ -14,6 +14,7 @@ final class Category
         public readonly ?string $parentId,
         public readonly bool $showInSideMenu,
         public readonly bool $showInTopMenu,
+        public readonly ?string $iconUrl,
         public readonly ?string $seoTitle,
         public readonly ?string $seoDescription
     ) {
@@ -29,6 +30,7 @@ final class Category
             $row['parentId'] ?? null,
             (bool) ($row['showInSideMenu'] ?? false),
             (bool) ($row['showInTopMenu'] ?? false),
+            $row['iconUrl'] ?? null,
             $row['seoTitle'] ?? null,
             $row['seoDescription'] ?? null,
         );
@@ -44,6 +46,7 @@ final class Category
             'parent_id' => $this->parentId,
             'show_in_side_menu' => $this->showInSideMenu,
             'show_in_top_menu' => $this->showInTopMenu,
+            'icon_url' => $this->iconUrl,
             'seo_title' => $this->seoTitle,
             'seo_description' => $this->seoDescription,
         ];

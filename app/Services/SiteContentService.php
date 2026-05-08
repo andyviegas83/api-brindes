@@ -43,14 +43,18 @@ final class SiteContentService
         return [
             'institutional_links' => $navigation['institutional_links'] ?? [],
             'main_categories' => $this->catalogService->mainCategories(),
+            'all_categories' => $this->catalogService->allCategories(),
             'all_categories_path' => '/categorias',
         ];
     }
 
     public function homepage(): array
     {
+        $settings = $this->contentAdapterRepository->fetchHomePageSettings();
+
         return [
             'main_banners' => $this->contentAdapterRepository->fetchBanners(),
+            'settings' => $this->withoutDuplicatedHomepageMedia($settings),
             'featured_categories' => $this->contentAdapterRepository->fetchFeaturedCategories(),
             'facilities_banner' => $this->contentAdapterRepository->fetchFacilitiesBanner(),
             'testimonials' => $this->contentAdapterRepository->fetchTestimonials(),
@@ -58,6 +62,17 @@ final class SiteContentService
             'client_logos' => $this->contentAdapterRepository->fetchClientLogos(),
             'seo_content' => $this->contentAdapterRepository->fetchSeoContent(),
         ];
+    }
+
+    private function withoutDuplicatedHomepageMedia(array $settings): array
+    {
+        unset(
+            $settings['featuredCategoryBanners'],
+            $settings['companyLogos'],
+            $settings['siteBanners']
+        );
+
+        return $settings;
     }
 
     public function page(string $pageKey): array

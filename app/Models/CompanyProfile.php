@@ -16,6 +16,7 @@ final class CompanyProfile
         public readonly ?string $logoUrl,
         public readonly ?string $faviconUrl,
         public readonly array $themeColors,
+        public readonly array $homePageSettings,
         public readonly array $socialLinks,
         public readonly array $address
     ) {
@@ -23,6 +24,9 @@ final class CompanyProfile
 
     public static function fromArray(array $row): self
     {
+        $siteThemeColors = self::decodeArray($row['siteThemeColors'] ?? []);
+        $homePageSettings = self::decodeArray($row['homePageSettings'] ?? []);
+
         return new self(
             $row['legalName'] ?? null,
             $row['tradeName'] ?? null,
@@ -32,7 +36,8 @@ final class CompanyProfile
             $row['mobilePhone'] ?? null,
             $row['logoUrl'] ?? null,
             $row['faviconUrl'] ?? null,
-            is_array($row['siteThemeColors'] ?? null) ? $row['siteThemeColors'] : [],
+            $siteThemeColors,
+            $homePageSettings,
             [
                 'google' => $row['googleUrl'] ?? null,
                 'reclame_aqui' => $row['reclameAquiUrl'] ?? null,
@@ -54,6 +59,21 @@ final class CompanyProfile
                 'zip_code' => $row['zipCode'] ?? null,
             ]
         );
+    }
+
+    private static function decodeArray(mixed $value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        if (!is_string($value) || trim($value) === '') {
+            return [];
+        }
+
+        $decoded = json_decode($value, true);
+
+        return is_array($decoded) ? $decoded : [];
     }
 
     public function toArray(): array

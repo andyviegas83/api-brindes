@@ -29,23 +29,31 @@ final class SiteCatalogService
     public function mainCategories(int $limit = 10): array
     {
         try {
-            return $this->categorySerializer->collection($this->categoryRepository->mainMenu($limit));
+            $categories = $this->categorySerializer->collection($this->categoryRepository->mainMenu($limit));
+
+            if ($categories !== []) {
+                return $categories;
+            }
         } catch (Throwable $exception) {
             $this->logger->warning('Main categories fallback activated.', ['message' => $exception->getMessage()]);
-
-            return [];
         }
+
+        return array_slice($this->platformNavigationCategories('topMenuCategories'), 0, $limit);
     }
 
     public function allCategories(): array
     {
         try {
-            return $this->categorySerializer->collection($this->categoryRepository->all());
+            $categories = $this->categorySerializer->collection($this->categoryRepository->sideMenu());
+
+            if ($categories !== []) {
+                return $categories;
+            }
         } catch (Throwable $exception) {
             $this->logger->warning('Categories fallback activated.', ['message' => $exception->getMessage()]);
-
-            return [];
         }
+
+        return $this->platformNavigationCategories('sideMenuCategories');
     }
 
     public function products(int $page = 1, int $perPage = 12, ?string $category = null, ?string $search = null): array
@@ -107,6 +115,67 @@ final class SiteCatalogService
         return [
             'items' => array_values($slice),
             'pagination' => $this->paginationSerializer->serialize($page, $perPage, count($items)),
+        ];
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function platformNavigationCategories(string $key): array
+    {
+        $baseUrl = rtrim((string) config('app.erp_base_url', ''), '/');
+
+        if ($baseUrl === '') {
+            return [];
+        }
+
+        try {
+            $context = stream_context_create([
+                'http' => [
+                    'method' => 'GET',
+                    'header' => "Accept: application/json\r\n",
+                    'timeout' => 5,
+                    'ignore_errors' => true,
+                ],
+            ]);
+            $response = @file_get_contents($baseUrl . '/categories/public/site-navigation', false, $context);
+
+            if ($response === false) {
+                return [];
+            }
+
+            $payload = json_decode($response, true);
+
+            if (!is_array($payload) || !isset($payload[$key]) || !is_array($payload[$key])) {
+                return [];
+            }
+
+            return array_values(array_map([$this, 'normalizePlatformCategory'], $payload[$key]));
+        } catch (Throwable $exception) {
+            $this->logger->warning('Platform category navigation fallback failed.', ['message' => $exception->getMessage()]);
+
+            return [];
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $category
+     * @return array<string, mixed>
+     */
+    private function normalizePlatformCategory(array $category): array
+    {
+        return [
+            'id' => $category['id'] ?? null,
+            'slug' => (string) ($category['slug'] ?? ''),
+            'name' => (string) ($category['name'] ?? ''),
+            'short_description' => (string) ($category['description'] ?? ''),
+            'icon' => 'gift',
+            'icon_url' => (string) ($category['iconUrl'] ?? ''),
+            'parent_id' => $category['parentId'] ?? null,
+            'show_in_side_menu' => false,
+            'show_in_top_menu' => false,
+            'seo_title' => null,
+            'seo_description' => null,
         ];
     }
 }
