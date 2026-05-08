@@ -44,7 +44,7 @@ final class SiteCatalogService
     public function allCategories(): array
     {
         try {
-            $categories = $this->categorySerializer->collection($this->categoryRepository->sideMenu());
+            $categories = $this->categorySerializer->collection($this->categoryRepository->all());
 
             if ($categories !== []) {
                 return $categories;
