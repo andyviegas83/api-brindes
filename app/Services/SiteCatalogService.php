@@ -53,7 +53,7 @@ final class SiteCatalogService
             $this->logger->warning('Categories fallback activated.', ['message' => $exception->getMessage()]);
         }
 
-        return $this->platformNavigationCategories('sideMenuCategories');
+        return $this->platformNavigationCategories('allCategories');
     }
 
     public function products(int $page = 1, int $perPage = 12, ?string $category = null, ?string $search = null): array
