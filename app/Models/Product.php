@@ -18,7 +18,12 @@ final class Product
         public readonly ?int $minimumQuantity,
         public readonly ?int $leadTimeDays,
         public readonly string $categoryId,
-        public readonly ?string $categoryName
+        public readonly ?string $categoryName,
+        public readonly ?string $inclusionDate,
+        public readonly array $images,
+        public readonly array $categoryAssignments,
+        public readonly bool $isLaunch,
+        public readonly bool $isPromotion
     ) {
     }
 
@@ -36,8 +41,28 @@ final class Product
             isset($row['minimumQuantity']) ? (int) $row['minimumQuantity'] : null,
             isset($row['leadTimeDays']) ? (int) $row['leadTimeDays'] : null,
             (string) $row['categoryId'],
-            $row['categoryName'] ?? null
+            $row['categoryName'] ?? null,
+            isset($row['inclusionDate']) ? (string) $row['inclusionDate'] : null,
+            self::decodeArray($row['images'] ?? []),
+            self::decodeArray($row['categoryAssignments'] ?? []),
+            (bool) ($row['isLaunch'] ?? false),
+            (bool) ($row['isPromotion'] ?? false)
         );
+    }
+
+    private static function decodeArray(mixed $value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        if (!is_string($value) || trim($value) === '') {
+            return [];
+        }
+
+        $decoded = json_decode($value, true);
+
+        return is_array($decoded) ? $decoded : [];
     }
 
     public function toArray(): array
@@ -53,6 +78,11 @@ final class Product
             'technical_details' => $this->technicalDetails,
             'minimum_quantity' => $this->minimumQuantity,
             'lead_time_days' => $this->leadTimeDays,
+            'inclusion_date' => $this->inclusionDate,
+            'images' => $this->images,
+            'category_assignments' => $this->categoryAssignments,
+            'is_launch' => $this->isLaunch,
+            'is_promotion' => $this->isPromotion,
             'category' => [
                 'id' => $this->categoryId,
                 'name' => $this->categoryName,

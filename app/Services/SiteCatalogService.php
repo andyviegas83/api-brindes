@@ -77,14 +77,28 @@ final class SiteCatalogService
 
     public function promotions(int $page = 1, int $perPage = 12): array
     {
-        $items = $this->contentAdapterRepository->fetchPromotions();
+        try {
+            $items = array_values(array_filter(
+                $this->productSerializer->collection($this->productRepository->allActiveForSite()),
+                static fn (array $product): bool => (bool) ($product['is_promotion'] ?? false)
+            ));
+        } catch (Throwable) {
+            $items = $this->contentAdapterRepository->fetchPromotions();
+        }
 
         return $this->paginateCollection($items, $page, $perPage);
     }
 
     public function launches(int $page = 1, int $perPage = 12): array
     {
-        $items = $this->contentAdapterRepository->fetchReleases();
+        try {
+            $items = array_values(array_filter(
+                $this->productSerializer->collection($this->productRepository->allActiveForSite()),
+                static fn (array $product): bool => (bool) ($product['is_launch'] ?? false)
+            ));
+        } catch (Throwable) {
+            $items = $this->contentAdapterRepository->fetchReleases();
+        }
 
         return $this->paginateCollection($items, $page, $perPage);
     }

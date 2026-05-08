@@ -28,8 +28,13 @@ final class ErpProductRepository extends BaseRepository
                     p."status",
                     p."shortDescription",
                     p."technicalDetails",
+                    p."inclusionDate",
                     p."minimumQuantity",
                     p."leadTimeDays",
+                    p."images",
+                    p."categoryAssignments",
+                    p."isLaunch",
+                    p."isPromotion",
                     p."categoryId",
                     c."name" AS "categoryName"
                  FROM "%s" p
@@ -60,8 +65,9 @@ final class ErpProductRepository extends BaseRepository
         $params = ['status' => 'ACTIVE'];
 
         if ($category !== null && $category !== '') {
-            $filters[] = '(CAST(c."id" AS TEXT) = :category OR c."slug" = :category)';
+            $filters[] = '(CAST(c."id" AS TEXT) = :category OR c."slug" = :category OR p."categoryAssignments"::text ILIKE :categoryJson)';
             $params['category'] = $category;
+            $params['categoryJson'] = '%' . $category . '%';
         }
 
         if ($search !== null && $search !== '') {
@@ -97,8 +103,13 @@ final class ErpProductRepository extends BaseRepository
                     p."status",
                     p."shortDescription",
                     p."technicalDetails",
+                    p."inclusionDate",
                     p."minimumQuantity",
                     p."leadTimeDays",
+                    p."images",
+                    p."categoryAssignments",
+                    p."isLaunch",
+                    p."isPromotion",
                     p."categoryId",
                     c."name" AS "categoryName"
                  FROM "%s" p
@@ -138,8 +149,13 @@ final class ErpProductRepository extends BaseRepository
                     p."status",
                     p."shortDescription",
                     p."technicalDetails",
+                    p."inclusionDate",
                     p."minimumQuantity",
                     p."leadTimeDays",
+                    p."images",
+                    p."categoryAssignments",
+                    p."isLaunch",
+                    p."isPromotion",
                     p."categoryId",
                     c."name" AS "categoryName"
                  FROM "%s" p
@@ -155,3 +171,4 @@ final class ErpProductRepository extends BaseRepository
         return $row === null ? null : Product::fromArray($row);
     }
 }
+
